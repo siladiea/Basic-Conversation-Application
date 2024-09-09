@@ -1,0 +1,81 @@
+# README
+## Running
+- To test the project, run TestCases.java
+	- each test case and its functionality is broken down below.
+- To run the program, run MainServer.java to start the server and then run Client.java.
+## Submissions
+- David submitted to Vocareum
+- David submitted report to BrightSpace
+## Class breakdown
+### Phase 1 Classes
+- Profile.java (and ProfileInterface.java)
+	- creates a user profile for the social media platform
+	- Each user will have a username, password, friends list, blocked list, and a biography
+	- There are getters and setters for each property as well as a toString function that returns the profile name and biography.
+	- **Testing**
+		- declaration test to make sure that profile is public, not abstract, implements the interface, and extends other objects
+		- Each constructor and its corresponding setters and getters are tested to see if they match the user inputs.
+		- the equals method is also tested by creating two separate profiles with the same username and password but different user id.
+		- There is also a test for the blocking users and friending users feature to make sure that when the method is called the correct user is being added to the list.
+- Database.java (and DatabaseInterface.java)
+	- Stores a list of users (and their passwords), lists of friends of each user, lists of blocked users of each user, a list of messages of the conversations of each user, and a list of user biographies
+		- each list is stored in a text file
+	- **Testing**
+		- tests to see if the lists for the constructors that require lists are created
+		- also test the declaration of the class to see if it is public, not abstract, and implements its interface
+  		- tests storage functions and checks to see if the text files corresponding to the lists that store users, friends, blocked users, and messages are storing the information in the correct format.
+- ChatClient.java (and ChatClientInterface.java)
+	- will eventually hold the chat GUI
+	- writes each message onto a text file and organizes it 
+	- Each message includes the date and time it was written
+		- The time is formatted with month, day, year, then hour, minutes
+		- it writes it to the text file in the format of username first, then date, and then the message on the next line
+	- **Testing**
+		- tests the declaration of the class to see if it is public, not abstract, and implements its interface
+### Phase 2 Classes
+- MainServer.java (and MainServerInterface.java)
+	- a class for the server operations of the application
+	- There are two methods that are synchronized:
+		- the messagingFeature is synchronized as it is accessing a file from the database that holds all the previous messages.
+			- It works by matching the pair of users that would like to message each other and then sending the users their message history from the database.
+			- It also receives messages from the user to add to the database, and then updates by sending the user the new message
+		- The searchFeature is synchronized as it is accessing a file from the database that holds all the profiles
+			- It works by first reading the file and extracting the profile names and the profile biographies. 
+			- It then loops for as long as it takes for the user to continue requesting searches
+			- Once a search query matches or the profile name contains the letters in the query, it is presented to the user with the biography
+	- In the non synchronized area:
+		- Log-in page/landing page
+			- A continuous loop waits for a user to either pick sign-up or log-in. If it is log-in they need to write the corresponding password and username to exit the loop. If it is sign-in they need to pick a username that doesn’t already exist to exit the loop
+		- Profile operations
+			- If statements in a while loop that checks to see if the user is adding, blocking, removing, searching, chatting, or trying to exit the loop (this is temporary since there is no GUI).
+			- Each operation will make the corresponding changes to the profile.
+		- **Testing**
+			- Tests whether the messaging feature works and checks whether the message written to the file is same as expected string ⁃ also tests the search feature. Takes in a username that the user wants to search and returns the name and bio of the searched user and writes it to a file. 
+- Client.java (and ClientInterface.java)
+	- This is the page that the user will be using to access the server, starts off with connecting to the server.
+	- Asks the user to login and takes their scanner input
+		- incorrect logins will be checked by the GUI
+	- Then asks if the user would like to add, block, remove, search, chat, or exit the program
+		- Then whichever is selected will have the corresponding action sent to the server and the result written to the user.
+	- **Testing**
+		- Tests whether the client server works. takes in a file with a list of commands that will be read into the server. tests whether the MainServer received the commands and whether it performs the correct tasks. output is written to a file and test checks whether the expected string is the same as the string written to the file
+### Phase 3 Classes
+- Additions made to Client.java
+	- Now has the complete GUI with multiple panes, text areas, buttons, text fields, and message dialogs. 
+	- Has a class that constantly checks with action-listeners to see if actions are performed. 
+	- Complete functionality that has been added:
+		- Login and sign-in page
+		- adding friends
+		- blocking users
+		- removing users from friends list
+		- chatting with friends
+		- viewing a profile with their biography
+		- searching for a friend 
+		- searching for a profile 
+- ClientHandler.java (and ClientHandlerInterface)
+	- a thread-safe class that holds all the functionality of the app
+	- This is the class that is extracting the data from the database, processing the data, and displaying it to the client/user
+		- This includes the search feature, profile viewer, adding, blocking, removing, logging in, signing up, and chatting feature.
+- MainServer.java (and MainServerInterface)
+	- Just the server that runs the ClientHandler
+	- Is able to stay on indefinitely and connect with other users
